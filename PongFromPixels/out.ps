@@ -1,0 +1,1582 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 18 36 594 756
+%%Title: Enscript Output
+%%Creator: GNU Enscript 1.6.5.90
+%%CreationDate: Sun Oct 27 19:28:07 2019
+%%Orientation: Landscape
+%%Pages: (atend)
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: (atend)
+%%EndComments
+%%BeginProlog
+%%BeginResource: procset Enscript-Prolog 1.6.5 90
+%
+% Procedures.
+%
+
+/_S {	% save current state
+  /_s save def
+} def
+/_R {	% restore from saved state
+  _s restore
+} def
+
+/S {	% showpage protecting gstate
+  gsave
+  showpage
+  grestore
+} bind def
+
+/MF {	% fontname newfontname -> -	make a new encoded font
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  % insert only valid encoding vectors
+  encoding_vector length 256 eq {
+    newfont /Encoding encoding_vector put
+  } if
+
+  newfontname newfont definefont pop
+} def
+
+/MF_PS { % fontname newfontname -> -	make a new font preserving its enc
+  /newfontname exch def
+  /fontname exch def
+
+  /fontdict fontname findfont def
+  /newfont fontdict maxlength dict def
+
+  fontdict {
+    exch
+    dup /FID eq {
+      % skip FID pair
+      pop pop
+    } {
+      % copy to the new font dictionary
+      exch newfont 3 1 roll put
+    } ifelse
+  } forall
+
+  newfont /FontName newfontname put
+
+  newfontname newfont definefont pop
+} def
+
+/SF { % fontname width height -> -	set a new font
+  /height exch def
+  /width exch def
+
+  findfont
+  [width 0 0 height 0 0] makefont setfont
+} def
+
+/SUF { % fontname width height -> -	set a new user font
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF
+  /F-gs-user-font width height SF
+} def
+
+/SUF_PS { % fontname width height -> -	set a new user font preserving its enc
+  /height exch def
+  /width exch def
+
+  /F-gs-user-font MF_PS
+  /F-gs-user-font width height SF
+} def
+
+/M {moveto} bind def
+/s {show} bind def
+
+/Box {	% x y w h -> -			define box path
+  /d_h exch def /d_w exch def /d_y exch def /d_x exch def
+  d_x d_y  moveto
+  d_w 0 rlineto
+  0 d_h rlineto
+  d_w neg 0 rlineto
+  closepath
+} def
+
+/bgs {	% x y height blskip gray str -> -	show string with bg color
+  /str exch def
+  /gray exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    gray setgray
+    fill
+  grestore
+  x y M str s
+} def
+
+/bgcs { % x y height blskip red green blue str -> -  show string with bg color
+  /str exch def
+  /blue exch def
+  /green exch def
+  /red exch def
+  /blskip exch def
+  /height exch def
+  /y exch def
+  /x exch def
+
+  gsave
+    x y blskip sub str stringwidth pop height Box
+    red green blue setrgbcolor
+    fill
+  grestore
+  x y M str s
+} def
+
+% Highlight bars.
+/highlight_bars {	% nlines lineheight output_y_margin gray -> -
+  gsave
+    setgray
+    /ymarg exch def
+    /lineheight exch def
+    /nlines exch def
+
+    % This 2 is just a magic number to sync highlight lines to text.
+    0 d_header_y ymarg sub 2 sub translate
+
+    /cw d_output_w cols div def
+    /nrows d_output_h ymarg 2 mul sub lineheight div cvi def
+
+    % for each column
+    0 1 cols 1 sub {
+      cw mul /xp exch def
+
+      % for each rows
+      0 1 nrows 1 sub {
+        /rn exch def
+        rn lineheight mul neg /yp exch def
+        rn nlines idiv 2 mod 0 eq {
+	  % Draw highlight bar.  4 is just a magic indentation.
+	  xp 4 add yp cw 8 sub lineheight neg Box fill
+	} if
+      } for
+    } for
+
+  grestore
+} def
+
+% Line highlight bar.
+/line_highlight {	% x y width height gray -> -
+  gsave
+    /gray exch def
+    Box gray setgray fill
+  grestore
+} def
+
+% Column separator lines.
+/column_lines {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h translate
+    /cw d_output_w cols div def
+    1 1 cols 1 sub {
+      cw mul 0 moveto
+      0 d_output_h rlineto stroke
+    } for
+  grestore
+} def
+
+% Column borders.
+/column_borders {
+  gsave
+    .1 setlinewidth
+    0 d_footer_h moveto
+    0 d_output_h rlineto
+    d_output_w 0 rlineto
+    0 d_output_h neg rlineto
+    closepath stroke
+  grestore
+} def
+
+% Do the actual underlay drawing
+/draw_underlay {
+  ul_style 0 eq {
+    ul_str true charpath stroke
+  } {
+    ul_str show
+  } ifelse
+} def
+
+% Underlay
+/underlay {	% - -> -
+  gsave
+    0 d_page_h translate
+    d_page_h neg d_page_w atan rotate
+
+    ul_gray setgray
+    ul_font setfont
+    /dw d_page_h dup mul d_page_w dup mul add sqrt def
+    ul_str stringwidth pop dw exch sub 2 div ul_h_ptsize -2 div moveto
+    draw_underlay
+  grestore
+} def
+
+/user_underlay {	% - -> -
+  gsave
+    ul_x ul_y translate
+    ul_angle rotate
+    ul_gray setgray
+    ul_font setfont
+    0 0 ul_h_ptsize 2 div sub moveto
+    draw_underlay
+  grestore
+} def
+
+% Page prefeed
+/page_prefeed {		% bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} def
+
+% Wrapped line markers
+/wrapped_line_mark {	% x y charwith charheight type -> -
+  /type exch def
+  /h exch def
+  /w exch def
+  /y exch def
+  /x exch def
+
+  type 2 eq {
+    % Black boxes (like TeX does)
+    gsave
+      0 setlinewidth
+      x w 4 div add y M
+      0 h rlineto w 2 div 0 rlineto 0 h neg rlineto
+      closepath fill
+    grestore
+  } {
+    type 3 eq {
+      % Small arrows
+      gsave
+        .2 setlinewidth
+        x w 2 div add y h 2 div add M
+        w 4 div 0 rlineto
+        x w 4 div add y lineto stroke
+
+        x w 4 div add w 8 div add y h 4 div add M
+        x w 4 div add y lineto
+	w 4 div h 8 div rlineto stroke
+      grestore
+    } {
+      % do nothing
+    } ifelse
+  } ifelse
+} def
+
+% EPSF import.
+
+/BeginEPSF {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack
+  userdict begin
+  /showpage { } def
+  0 setgray 0 setlinecap
+  1 setlinewidth 0 setlinejoin
+  10 setmiterlimit [ ] 0 setdash newpath
+  /languagelevel where {
+    pop languagelevel
+    1 ne {
+      false setstrokeadjust false setoverprint
+    } if
+  } if
+} bind def
+
+/EndEPSF {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+%%EndResource
+%%BeginResource: procset Enscript-Encoding-88591 1.6.5 90
+/encoding_vector [
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclam       	/quotedbl     	/numbersign   	
+/dollar       	/percent      	/ampersand    	/quoteright   	
+/parenleft    	/parenright   	/asterisk     	/plus         	
+/comma        	/hyphen       	/period       	/slash        	
+/zero         	/one          	/two          	/three        	
+/four         	/five         	/six          	/seven        	
+/eight        	/nine         	/colon        	/semicolon    	
+/less         	/equal        	/greater      	/question     	
+/at           	/A            	/B            	/C            	
+/D            	/E            	/F            	/G            	
+/H            	/I            	/J            	/K            	
+/L            	/M            	/N            	/O            	
+/P            	/Q            	/R            	/S            	
+/T            	/U            	/V            	/W            	
+/X            	/Y            	/Z            	/bracketleft  	
+/backslash    	/bracketright 	/asciicircum  	/underscore   	
+/quoteleft    	/a            	/b            	/c            	
+/d            	/e            	/f            	/g            	
+/h            	/i            	/j            	/k            	
+/l            	/m            	/n            	/o            	
+/p            	/q            	/r            	/s            	
+/t            	/u            	/v            	/w            	
+/x            	/y            	/z            	/braceleft    	
+/bar          	/braceright   	/tilde        	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/.notdef      	/.notdef      	/.notdef      	/.notdef      	
+/space        	/exclamdown   	/cent         	/sterling     	
+/currency     	/yen          	/brokenbar    	/section      	
+/dieresis     	/copyright    	/ordfeminine  	/guillemotleft	
+/logicalnot   	/hyphen       	/registered   	/macron       	
+/degree       	/plusminus    	/twosuperior  	/threesuperior	
+/acute        	/mu           	/paragraph    	/bullet       	
+/cedilla      	/onesuperior  	/ordmasculine 	/guillemotright	
+/onequarter   	/onehalf      	/threequarters	/questiondown 	
+/Agrave       	/Aacute       	/Acircumflex  	/Atilde       	
+/Adieresis    	/Aring        	/AE           	/Ccedilla     	
+/Egrave       	/Eacute       	/Ecircumflex  	/Edieresis    	
+/Igrave       	/Iacute       	/Icircumflex  	/Idieresis    	
+/Eth          	/Ntilde       	/Ograve       	/Oacute       	
+/Ocircumflex  	/Otilde       	/Odieresis    	/multiply     	
+/Oslash       	/Ugrave       	/Uacute       	/Ucircumflex  	
+/Udieresis    	/Yacute       	/Thorn        	/germandbls   	
+/agrave       	/aacute       	/acircumflex  	/atilde       	
+/adieresis    	/aring        	/ae           	/ccedilla     	
+/egrave       	/eacute       	/ecircumflex  	/edieresis    	
+/igrave       	/iacute       	/icircumflex  	/idieresis    	
+/eth          	/ntilde       	/ograve       	/oacute       	
+/ocircumflex  	/otilde       	/odieresis    	/divide       	
+/oslash       	/ugrave       	/uacute       	/ucircumflex  	
+/udieresis    	/yacute       	/thorn        	/ydieresis    	
+] def
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Courier
+/HFpt_w 10 def
+/HFpt_h 10 def
+/Courier-Bold /HF-gs-font MF
+/HF /HF-gs-font findfont [HFpt_w 0 0 HFpt_h 0 0] makefont def
+/Courier /F-gs-font MF
+/F-gs-font 10 10 SF
+/#copies 1 def
+% Pagedevice definitions:
+gs_languagelevel 1 gt {
+  <<
+    /PageSize [612 792] 
+  >> setpagedevice
+} if
+%%BeginResource: procset Enscript-Header-enscript 1.6.5 90
+%%IncludeResource: font Times-Bold
+%%IncludeResource: font Times-Roman
+
+% Fonts.
+/Times-Bold /HeaderFont-Bold MF
+/HeaderDateF /HeaderFont-Bold findfont 12 scalefont def
+
+/Times-Roman /HeaderFont-Times MF
+/HeaderHDRF /HeaderFont-Times findfont 14 scalefont def
+
+/HeaderPageNumF /Helvetica-Bold findfont 28.8 scalefont def
+
+/do_header {	% print enscript header
+  gsave
+    d_header_x d_header_y translate
+
+    % light bar
+    0 0 d_header_w d_header_h 2 div Box
+    .95 setgray fill
+
+    % dark gray boxes
+    /dbw d_header_h 2 mul def	% dark box width
+    /dbc .7 def			% dark box color
+
+    % left dark box.
+    0 0 dbw d_header_h Box
+    dbc setgray fill
+
+    0 setgray 
+    HeaderDateF setfont
+    moddatestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 2 div 2 add moveto show
+    modtimestr dup stringwidth pop dbw exch sub 2 div 
+    d_header_h 5 div moveto show
+
+    % right dark box
+    d_header_w dbw sub 0 dbw d_header_h Box
+    dbc setgray fill
+
+    HeaderPageNumF setfont
+    1 setgray
+    pagenumstr dup
+    stringwidth pop dbw exch sub 2 div d_header_w dbw sub add
+    d_header_h .2 mul moveto show
+
+    % filename
+    0 setgray 
+    HeaderHDRF setfont
+    d_header_w fname stringwidth pop sub 2 div d_header_h 8 div moveto
+    fname show
+
+    % user supplied header string.
+    user_header_p {
+      /h d_header_h 8 div 5 mul def
+
+      % Implement strict enscript compatibility.
+      user_header_center_str () eq user_header_right_str () eq and {
+        d_header_w user_header_left_str stringwidth pop sub 2 div 
+        h moveto user_header_left_str show
+      } {
+        dbw 5 add h moveto user_header_left_str show
+
+        d_header_w user_header_center_str stringwidth pop sub 2 div 
+        h moveto user_header_center_str show
+
+	d_header_w dbw sub 5 sub user_header_right_str stringwidth pop
+	sub h moveto user_header_right_str show
+      } ifelse
+    } if
+
+  grestore
+} def
+%%EndResource
+/d_page_w 720 def
+/d_page_h 576 def
+/d_header_x 0 def
+/d_header_y 540 def
+/d_header_w 720 def
+/d_header_h 36 def
+/d_footer_x 0 def
+/d_footer_y 0 def
+/d_footer_w 720 def
+/d_footer_h 0 def
+/d_output_w 720 def
+/d_output_h 540 def
+/cols 1 def
+%%EndSetup
+%%Page: (1) 1
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 1 def
+/fname (pongFromPixels.py) def
+/fdir (.) def
+/ftail (pongFromPixels.py) def
+% User defined strings:
+/pagenumstr (1) def
+/moddatestr (10/27/19) def
+/modtimestr (18:51:22) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+30 527 M (1:) s
+/Courier-Bold 10 10 SUF
+48 527 M
+(""" Trains an agent with \(stochastic\) Policy Gradients on Pong. Uses OpenAI Gym. """) s
+/F-gs-font 10 10 SF
+30 516 M (2:) s
+/Courier-Bold 10 10 SUF
+48 516 M
+(import) s
+/F-gs-font 10 10 SF
+84 516 M
+( numpy as np) s
+30 505 M (3:) s
+/Courier-Bold 10 10 SUF
+48 505 M
+(import) s
+/F-gs-font 10 10 SF
+84 505 M
+( pickle) s
+30 494 M (4:) s
+/Courier-Bold 10 10 SUF
+48 494 M
+(import) s
+/F-gs-font 10 10 SF
+84 494 M
+( gym) s
+30 483 M (5:) s
+30 472 M (6:) s
+/Courier-Oblique 10 10 SUF
+48 472 M
+(# hyperparameters) s
+/F-gs-font 10 10 SF
+30 461 M (7:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 461 M
+(H = 200 ) s
+/Courier-Oblique 10 10 SUF
+96 461 M
+(# number of hidden layer neurons) s
+/F-gs-font 10 10 SF
+30 450 M (8:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 450 M
+(batch_size = 10 ) s
+/Courier-Oblique 10 10 SUF
+144 450 M
+(# every how many episodes to do a param update?) s
+/F-gs-font 10 10 SF
+30 439 M (9:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 439 M
+(learning_rate = 1e-4) s
+24 428 M (10:) s
+48 428 M
+(gamma = 0.99 ) s
+/Courier-Oblique 10 10 SUF
+126 428 M
+(# discount factor for reward) s
+/F-gs-font 10 10 SF
+24 417 M (11:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 417 M
+(decay_rate = 0.99 ) s
+/Courier-Oblique 10 10 SUF
+156 417 M
+(# decay factor tempfor RMSProp leaky sum of grad^2) s
+/F-gs-font 10 10 SF
+24 406 M (12:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 406 M
+(resume = False ) s
+/Courier-Oblique 10 10 SUF
+138 406 M
+(# resume from previous checkpoint?) s
+/F-gs-font 10 10 SF
+24 395 M (13:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 395 M
+(render = False) s
+24 384 M (14:) s
+24 373 M (15:) s
+/Courier-Oblique 10 10 SUF
+48 373 M
+(# model initialization) s
+/F-gs-font 10 10 SF
+24 362 M (16:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 362 M
+(D = 80 * 80 ) s
+/Courier-Oblique 10 10 SUF
+120 362 M
+(# input dimensionality: 80x80 grid) s
+/F-gs-font 10 10 SF
+24 351 M (17:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+/Courier-Bold 10 10 SUF
+48 351 M
+(if) s
+/F-gs-font 10 10 SF
+60 351 M
+( resume:) s
+24 340 M (18:) s
+48 340 M
+(  model = pickle.load\(open\() s
+/Courier-Bold 10 10 SUF
+210 340 M
+('save.p') s
+/F-gs-font 10 10 SF
+258 340 M
+(, ) s
+/Courier-Bold 10 10 SUF
+270 340 M
+('rb') s
+/F-gs-font 10 10 SF
+294 340 M
+(\)\)) s
+24 329 M (19:) s
+/Courier-Bold 10 10 SUF
+48 329 M
+(else) s
+/F-gs-font 10 10 SF
+72 329 M
+(:) s
+24 318 M (20:) s
+48 318 M
+(  model = {}) s
+24 307 M (21:) s
+48 307 M
+(  model[) s
+/Courier-Bold 10 10 SUF
+96 307 M
+('W1') s
+/F-gs-font 10 10 SF
+120 307 M
+(] = np.random.randn\(H,D\) / np.sqrt\(D\) ) s
+/Courier-Oblique 10 10 SUF
+348 307 M
+(# "Xavier" initialization) s
+/F-gs-font 10 10 SF
+24 296 M (22:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 296 M
+(  model[) s
+/Courier-Bold 10 10 SUF
+96 296 M
+('W2') s
+/F-gs-font 10 10 SF
+120 296 M
+(] = np.random.randn\(H\) / np.sqrt\(H\)) s
+24 285 M (23:) s
+48 285 M
+(  ) s
+24 274 M (24:) s
+48 274 M
+(grad_buffer = { k : np.zeros_like\(v\) ) s
+/Courier-Bold 10 10 SUF
+270 274 M
+(for) s
+/F-gs-font 10 10 SF
+288 274 M
+( k,v ) s
+/Courier-Bold 10 10 SUF
+318 274 M
+(in) s
+/F-gs-font 10 10 SF
+330 274 M
+( model.items\(\) } ) s
+/Courier-Oblique 10 10 SUF
+432 274 M
+(# update buffers that add up gradients over a b) s
+/F-gs-font 10 10 SF
+24 263 M (25:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 263 M
+(rmsprop_cache = { k : np.zeros_like\(v\) ) s
+/Courier-Bold 10 10 SUF
+282 263 M
+(for) s
+/F-gs-font 10 10 SF
+300 263 M
+( k,v ) s
+/Courier-Bold 10 10 SUF
+330 263 M
+(in) s
+/F-gs-font 10 10 SF
+342 263 M
+( model.items\(\) } ) s
+/Courier-Oblique 10 10 SUF
+444 263 M
+(# rmsprop memory) s
+/F-gs-font 10 10 SF
+24 252 M (26:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+24 241 M (27:) s
+/Courier-Bold 10 10 SUF
+48 241 M
+(def) s
+/F-gs-font 10 10 SF
+66 241 M
+( ) s
+/Courier-Bold 10 10 SUF
+72 241 M
+(sigmoid) s
+/F-gs-font 10 10 SF
+114 241 M
+(\(x\): ) s
+24 230 M (28:) s
+48 230 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 230 M
+(return) s
+/F-gs-font 10 10 SF
+96 230 M
+( 1.0 / \(1.0 + np.exp\(-x\)\) ) s
+/Courier-Oblique 10 10 SUF
+252 230 M
+(# sigmoid "squashing" function to interval [0,1]) s
+/F-gs-font 10 10 SF
+24 219 M (29:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+24 208 M (30:) s
+/Courier-Bold 10 10 SUF
+48 208 M
+(def) s
+/F-gs-font 10 10 SF
+66 208 M
+( ) s
+/Courier-Bold 10 10 SUF
+72 208 M
+(prepro) s
+/F-gs-font 10 10 SF
+108 208 M
+(\(I\):) s
+24 197 M (31:) s
+48 197 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 197 M
+(""" prepro 210x160x3 uint8 frame into 6400 \(80x80\) 1D float vector """) s
+/F-gs-font 10 10 SF
+24 186 M (32:) s
+48 186 M
+(  I = I[35:195] ) s
+/Courier-Oblique 10 10 SUF
+144 186 M
+(# crop) s
+/F-gs-font 10 10 SF
+24 175 M (33:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 175 M
+(  I = I[::2,::2,0] ) s
+/Courier-Oblique 10 10 SUF
+162 175 M
+(# downsample by factor of 2) s
+/F-gs-font 10 10 SF
+24 164 M (34:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 164 M
+(  I[I == 144] = 0 ) s
+/Courier-Oblique 10 10 SUF
+156 164 M
+(# erase background \(background type 1\)) s
+/F-gs-font 10 10 SF
+24 153 M (35:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 153 M
+(  I[I == 109] = 0 ) s
+/Courier-Oblique 10 10 SUF
+156 153 M
+(# erase background \(background type 2\)) s
+/F-gs-font 10 10 SF
+24 142 M (36:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 142 M
+(  I[I != 0] = 1 ) s
+/Courier-Oblique 10 10 SUF
+144 142 M
+(# everything else \(paddles, ball\) just set to 1) s
+/F-gs-font 10 10 SF
+24 131 M (37:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 131 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 131 M
+(return) s
+/F-gs-font 10 10 SF
+96 131 M
+( I.astype\(np.float\).ravel\(\)) s
+24 120 M (38:) s
+24 109 M (39:) s
+/Courier-Bold 10 10 SUF
+48 109 M
+(def) s
+/F-gs-font 10 10 SF
+66 109 M
+( ) s
+/Courier-Bold 10 10 SUF
+72 109 M
+(discount_rewards) s
+/F-gs-font 10 10 SF
+168 109 M
+(\(r\):) s
+24 98 M (40:) s
+48 98 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 98 M
+(""" take 1D float array of rewards and compute discounted reward """) s
+/F-gs-font 10 10 SF
+24 87 M (41:) s
+48 87 M
+(  discounted_r = np.zeros_like\(r\)) s
+24 76 M (42:) s
+48 76 M
+(  running_add = 0) s
+24 65 M (43:) s
+48 65 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 65 M
+(for) s
+/F-gs-font 10 10 SF
+78 65 M
+( t ) s
+/Courier-Bold 10 10 SUF
+96 65 M
+(in) s
+/F-gs-font 10 10 SF
+108 65 M
+( reversed\(range\(0, r.size\)\):) s
+24 54 M (44:) s
+48 54 M
+(    ) s
+/Courier-Bold 10 10 SUF
+72 54 M
+(if) s
+/F-gs-font 10 10 SF
+84 54 M
+( r[t] != 0: running_add = 0 ) s
+/Courier-Oblique 10 10 SUF
+252 54 M
+(# reset the sum, since this was a game boundary \(pong specific!\)) s
+/F-gs-font 10 10 SF
+24 43 M (45:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 43 M
+(    running_add = running_add * gamma + r[t]) s
+24 32 M (46:) s
+48 32 M
+(    discounted_r[t] = running_add) s
+24 21 M (47:) s
+48 21 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 21 M
+(return) s
+/F-gs-font 10 10 SF
+96 21 M
+( discounted_r) s
+24 10 M (48:) s
+_R
+S
+%%Page: (2) 2
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 2 def
+/fname (pongFromPixels.py) def
+/fdir (.) def
+/ftail (pongFromPixels.py) def
+% User defined strings:
+/pagenumstr (2) def
+/moddatestr (10/27/19) def
+/modtimestr (18:51:22) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+24 527 M (49:) s
+/Courier-Bold 10 10 SUF
+48 527 M
+(def) s
+/F-gs-font 10 10 SF
+66 527 M
+( ) s
+/Courier-Bold 10 10 SUF
+72 527 M
+(policy_forward) s
+/F-gs-font 10 10 SF
+156 527 M
+(\(x\):) s
+24 516 M (50:) s
+48 516 M
+(  h = np.dot\(model[) s
+/Courier-Bold 10 10 SUF
+162 516 M
+('W1') s
+/F-gs-font 10 10 SF
+186 516 M
+(], x\)) s
+24 505 M (51:) s
+48 505 M
+(  h[h<0] = 0 ) s
+/Courier-Oblique 10 10 SUF
+126 505 M
+(# ReLU nonlinearity) s
+/F-gs-font 10 10 SF
+24 494 M (52:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 494 M
+(  logp = np.dot\(model[) s
+/Courier-Bold 10 10 SUF
+180 494 M
+('W2') s
+/F-gs-font 10 10 SF
+204 494 M
+(], h\)) s
+24 483 M (53:) s
+48 483 M
+(  p = sigmoid\(logp\)) s
+24 472 M (54:) s
+48 472 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 472 M
+(return) s
+/F-gs-font 10 10 SF
+96 472 M
+( p, h ) s
+/Courier-Oblique 10 10 SUF
+132 472 M
+(# return probability of taking action 2, and hidden state) s
+/F-gs-font 10 10 SF
+24 461 M (55:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+24 450 M (56:) s
+/Courier-Bold 10 10 SUF
+48 450 M
+(def) s
+/F-gs-font 10 10 SF
+66 450 M
+( ) s
+/Courier-Bold 10 10 SUF
+72 450 M
+(policy_backward) s
+/F-gs-font 10 10 SF
+162 450 M
+(\(eph, epdlogp\):) s
+24 439 M (57:) s
+48 439 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 439 M
+(""" backward pass. \(eph is array of intermediate hidden states\) """) s
+/F-gs-font 10 10 SF
+24 428 M (58:) s
+48 428 M
+(  dW2 = np.dot\(eph.T, epdlogp\).ravel\(\)) s
+24 417 M (59:) s
+48 417 M
+(  dh = np.outer\(epdlogp, model[) s
+/Courier-Bold 10 10 SUF
+234 417 M
+('W2') s
+/F-gs-font 10 10 SF
+258 417 M
+(]\)) s
+24 406 M (60:) s
+48 406 M
+(  dh[eph <= 0] = 0 ) s
+/Courier-Oblique 10 10 SUF
+162 406 M
+(# backpro prelu) s
+/F-gs-font 10 10 SF
+24 395 M (61:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 395 M
+(  dW1 = np.dot\(dh.T, epx\)) s
+24 384 M (62:) s
+48 384 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 384 M
+(return) s
+/F-gs-font 10 10 SF
+96 384 M
+( {) s
+/Courier-Bold 10 10 SUF
+108 384 M
+('W1') s
+/F-gs-font 10 10 SF
+132 384 M
+(:dW1, ) s
+/Courier-Bold 10 10 SUF
+168 384 M
+('W2') s
+/F-gs-font 10 10 SF
+192 384 M
+(:dW2}) s
+24 373 M (63:) s
+24 362 M (64:) s
+48 362 M
+(env = gym.make\() s
+/Courier-Bold 10 10 SUF
+138 362 M
+("Pong-v0") s
+/F-gs-font 10 10 SF
+192 362 M
+(\)) s
+24 351 M (65:) s
+48 351 M
+(observation = env.reset\(\)) s
+24 340 M (66:) s
+48 340 M
+(prev_x = None ) s
+/Courier-Oblique 10 10 SUF
+132 340 M
+(# used in computing the difference frame) s
+/F-gs-font 10 10 SF
+24 329 M (67:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 329 M
+(xs,hs,dlogps,drs = [],[],[],[]) s
+24 318 M (68:) s
+48 318 M
+(running_reward = None) s
+24 307 M (69:) s
+48 307 M
+(reward_sum = 0) s
+24 296 M (70:) s
+48 296 M
+(episode_number = 0) s
+24 285 M (71:) s
+/Courier-Bold 10 10 SUF
+48 285 M
+(while) s
+/F-gs-font 10 10 SF
+78 285 M
+( True:) s
+24 274 M (72:) s
+48 274 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 274 M
+(if) s
+/F-gs-font 10 10 SF
+72 274 M
+( render: env.render\(\)) s
+24 263 M (73:) s
+24 252 M (74:) s
+48 252 M
+(  ) s
+/Courier-Oblique 10 10 SUF
+60 252 M
+(# preprocess the observation, set input to network to be difference image) s
+/F-gs-font 10 10 SF
+24 241 M (75:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 241 M
+(  cur_x = prepro\(observation\)) s
+24 230 M (76:) s
+48 230 M
+(  x = cur_x - prev_x ) s
+/Courier-Bold 10 10 SUF
+174 230 M
+(if) s
+/F-gs-font 10 10 SF
+186 230 M
+( prev_x ) s
+/Courier-Bold 10 10 SUF
+234 230 M
+(is) s
+/F-gs-font 10 10 SF
+246 230 M
+( ) s
+/Courier-Bold 10 10 SUF
+252 230 M
+(not) s
+/F-gs-font 10 10 SF
+270 230 M
+( None ) s
+/Courier-Bold 10 10 SUF
+306 230 M
+(else) s
+/F-gs-font 10 10 SF
+330 230 M
+( np.zeros\(D\)) s
+24 219 M (77:) s
+48 219 M
+(  prev_x = cur_x) s
+24 208 M (78:) s
+24 197 M (79:) s
+48 197 M
+(  ) s
+/Courier-Oblique 10 10 SUF
+60 197 M
+(# forward the policy network and sample an action from the returned probability) s
+/F-gs-font 10 10 SF
+24 186 M (80:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 186 M
+(  aprob, h = policy_forward\(x\)) s
+24 175 M (81:) s
+48 175 M
+(  action = 2 ) s
+/Courier-Bold 10 10 SUF
+126 175 M
+(if) s
+/F-gs-font 10 10 SF
+138 175 M
+( np.random.uniform\(\) < aprob ) s
+/Courier-Bold 10 10 SUF
+312 175 M
+(else) s
+/F-gs-font 10 10 SF
+336 175 M
+( 3 ) s
+/Courier-Oblique 10 10 SUF
+354 175 M
+(# roll the dice!) s
+/F-gs-font 10 10 SF
+24 164 M (82:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+24 153 M (83:) s
+48 153 M
+(  ) s
+/Courier-Oblique 10 10 SUF
+60 153 M
+(# record various intermediates \(needed later for backprop\)) s
+/F-gs-font 10 10 SF
+24 142 M (84:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 142 M
+(  xs.append\(x\) ) s
+/Courier-Oblique 10 10 SUF
+138 142 M
+(# observation) s
+/F-gs-font 10 10 SF
+24 131 M (85:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 131 M
+(  hs.append\(h\) ) s
+/Courier-Oblique 10 10 SUF
+138 131 M
+(# hidden state) s
+/F-gs-font 10 10 SF
+24 120 M (86:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 120 M
+(  y = 1 ) s
+/Courier-Bold 10 10 SUF
+96 120 M
+(if) s
+/F-gs-font 10 10 SF
+108 120 M
+( action == 2 ) s
+/Courier-Bold 10 10 SUF
+186 120 M
+(else) s
+/F-gs-font 10 10 SF
+210 120 M
+( 0 ) s
+/Courier-Oblique 10 10 SUF
+228 120 M
+(# a "fake label") s
+/F-gs-font 10 10 SF
+24 109 M (87:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 109 M
+(  dlogps.append\(y - aprob\) ) s
+/Courier-Oblique 10 10 SUF
+210 109 M
+(# grad that encourages the action that was taken to be taken \(see http://cs231n.gith) s
+/F-gs-font 10 10 SF
+24 98 M (88:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+24 87 M (89:) s
+48 87 M
+(  ) s
+/Courier-Oblique 10 10 SUF
+60 87 M
+(# step the environment and get new measurements) s
+/F-gs-font 10 10 SF
+24 76 M (90:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 76 M
+(  observation, reward, done, info = env.step\(action\)) s
+24 65 M (91:) s
+48 65 M
+(  reward_sum += reward) s
+24 54 M (92:) s
+24 43 M (93:) s
+48 43 M
+(  drs.append\(reward\) ) s
+/Courier-Oblique 10 10 SUF
+174 43 M
+(# record reward \(has to be done after we call step\(\) to get reward for previous action\)) s
+/F-gs-font 10 10 SF
+24 32 M (94:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+24 21 M (95:) s
+48 21 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 21 M
+(if) s
+/F-gs-font 10 10 SF
+72 21 M
+( done: ) s
+/Courier-Oblique 10 10 SUF
+114 21 M
+(# an episode finished) s
+/F-gs-font 10 10 SF
+24 10 M (96:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 10 M
+(    episode_number += 1) s
+_R
+S
+%%Page: (3) 3
+%%BeginPageSetup
+_S
+90 rotate
+36 -594 translate
+/pagenum 3 def
+/fname (pongFromPixels.py) def
+/fdir (.) def
+/ftail (pongFromPixels.py) def
+% User defined strings:
+/pagenumstr (3) def
+/moddatestr (10/27/19) def
+/modtimestr (18:51:22) def
+/user_header_p false def
+/user_footer_p false def
+%%EndPageSetup
+do_header
+24 527 M (97:) s
+24 516 M (98:) s
+48 516 M
+(    ) s
+/Courier-Oblique 10 10 SUF
+72 516 M
+(# stack together all inputs, hidden states, action gradients, and rewards for this episode) s
+/F-gs-font 10 10 SF
+24 505 M (99:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 505 M
+(    epx = np.vstack\(xs\)) s
+18 494 M (100:) s
+48 494 M
+(    eph = np.vstack\(hs\)) s
+18 483 M (101:) s
+48 483 M
+(    epdlogp = np.vstack\(dlogps\)) s
+18 472 M (102:) s
+48 472 M
+(    epr = np.vstack\(drs\)) s
+18 461 M (103:) s
+48 461 M
+(    xs,hs,dlogps,drs = [],[],[],[] ) s
+/Courier-Oblique 10 10 SUF
+258 461 M
+(# reset array memory) s
+/F-gs-font 10 10 SF
+18 450 M (104:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+18 439 M (105:) s
+48 439 M
+(    ) s
+/Courier-Oblique 10 10 SUF
+72 439 M
+(# compute the discounted reward backwards through time) s
+/F-gs-font 10 10 SF
+18 428 M (106:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 428 M
+(    discounted_epr = discount_rewards\(epr\)) s
+18 417 M (107:) s
+48 417 M
+(    ) s
+/Courier-Oblique 10 10 SUF
+72 417 M
+(# standardize the rewards to be unit normal \(helps control the gradient estimator variance\)) s
+/F-gs-font 10 10 SF
+18 406 M (108:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 406 M
+(    discounted_epr -= np.mean\(discounted_epr\)) s
+18 395 M (109:) s
+48 395 M
+(    discounted_epr /= np.std\(discounted_epr\)) s
+18 384 M (110:) s
+18 373 M (111:) s
+48 373 M
+(    epdlogp *= discounted_epr ) s
+/Courier-Oblique 10 10 SUF
+228 373 M
+(# modulate the gradient with advantage \(PG magic happens right here.\)) s
+/F-gs-font 10 10 SF
+18 362 M (112:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 362 M
+(    grad = policy_backward\(eph, epdlogp\)) s
+18 351 M (113:) s
+48 351 M
+(    ) s
+/Courier-Bold 10 10 SUF
+72 351 M
+(for) s
+/F-gs-font 10 10 SF
+90 351 M
+( k ) s
+/Courier-Bold 10 10 SUF
+108 351 M
+(in) s
+/F-gs-font 10 10 SF
+120 351 M
+( model: grad_buffer[k] += grad[k] ) s
+/Courier-Oblique 10 10 SUF
+324 351 M
+(# accumulate grad over batch) s
+/F-gs-font 10 10 SF
+18 340 M (114:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+18 329 M (115:) s
+48 329 M
+(    ) s
+/Courier-Oblique 10 10 SUF
+72 329 M
+(# perform rmsprop parameter update every batch_size episodes) s
+/F-gs-font 10 10 SF
+18 318 M (116:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 318 M
+(    ) s
+/Courier-Bold 10 10 SUF
+72 318 M
+(if) s
+/F-gs-font 10 10 SF
+84 318 M
+( episode_number % batch_size == 0:) s
+18 307 M (117:) s
+48 307 M
+(      ) s
+/Courier-Bold 10 10 SUF
+84 307 M
+(for) s
+/F-gs-font 10 10 SF
+102 307 M
+( k,v ) s
+/Courier-Bold 10 10 SUF
+132 307 M
+(in) s
+/F-gs-font 10 10 SF
+144 307 M
+( model.items\(\):) s
+18 296 M (118:) s
+48 296 M
+(        g = grad_buffer[k] ) s
+/Courier-Oblique 10 10 SUF
+210 296 M
+(# gradient) s
+/F-gs-font 10 10 SF
+18 285 M (119:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 285 M
+(        rmsprop_cache[k] = decay_rate * rmsprop_cache[k] + \(1 - decay_rate\) * g**2) s
+18 274 M (120:) s
+48 274 M
+(        model[k] += learning_rate * g / \(np.sqrt\(rmsprop_cache[k]\) + 1e-5\)) s
+18 263 M (121:) s
+48 263 M
+(        grad_buffer[k] = np.zeros_like\(v\) ) s
+/Courier-Oblique 10 10 SUF
+300 263 M
+(# reset batch gradient buffer) s
+/F-gs-font 10 10 SF
+18 252 M (122:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+18 241 M (123:) s
+48 241 M
+(    ) s
+/Courier-Oblique 10 10 SUF
+72 241 M
+(# boring book-keeping) s
+/F-gs-font 10 10 SF
+18 230 M (124:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 230 M
+(    running_reward = reward_sum ) s
+/Courier-Bold 10 10 SUF
+240 230 M
+(if) s
+/F-gs-font 10 10 SF
+252 230 M
+( running_reward ) s
+/Courier-Bold 10 10 SUF
+348 230 M
+(is) s
+/F-gs-font 10 10 SF
+360 230 M
+( None ) s
+/Courier-Bold 10 10 SUF
+396 230 M
+(else) s
+/F-gs-font 10 10 SF
+420 230 M
+( running_reward * 0.99 + reward_sum * 0.01) s
+18 219 M (125:) s
+48 219 M
+(    ) s
+/Courier-Bold 10 10 SUF
+72 219 M
+(print) s
+/F-gs-font 10 10 SF
+102 219 M
+( \() s
+/Courier-Bold 10 10 SUF
+114 219 M
+('resetting env. episode reward total was %f. running mean: %f') s
+/F-gs-font 10 10 SF
+486 219 M
+( % \(reward_sum, running_reward\)\)) s
+18 208 M (126:) s
+48 208 M
+(    ) s
+/Courier-Bold 10 10 SUF
+72 208 M
+(if) s
+/F-gs-font 10 10 SF
+84 208 M
+( episode_number % 100 == 0: pickle.dump\(model, open\() s
+/Courier-Bold 10 10 SUF
+396 208 M
+('save.p') s
+/F-gs-font 10 10 SF
+444 208 M
+(, ) s
+/Courier-Bold 10 10 SUF
+456 208 M
+('wb') s
+/F-gs-font 10 10 SF
+480 208 M
+(\)\)) s
+18 197 M (127:) s
+48 197 M
+(    reward_sum = 0) s
+18 186 M (128:) s
+48 186 M
+(    observation = env.reset\(\) ) s
+/Courier-Oblique 10 10 SUF
+228 186 M
+(# reset env) s
+/F-gs-font 10 10 SF
+18 175 M (129:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 175 M
+(    prev_x = None) s
+18 164 M (130:) s
+18 153 M (131:) s
+48 153 M
+(  ) s
+/Courier-Bold 10 10 SUF
+60 153 M
+(if) s
+/F-gs-font 10 10 SF
+72 153 M
+( reward != 0: ) s
+/Courier-Oblique 10 10 SUF
+156 153 M
+(# Pong has either +1 or -1 reward exactly when game ends.) s
+/F-gs-font 10 10 SF
+18 142 M (132:) s
+/Courier-Oblique 10 10 SUF
+/F-gs-font 10 10 SF
+48 142 M
+(    ) s
+/Courier-Bold 10 10 SUF
+72 142 M
+(print) s
+/F-gs-font 10 10 SF
+102 142 M
+( \() s
+/Courier-Bold 10 10 SUF
+114 142 M
+('ep %d: game finished, reward: %f') s
+/F-gs-font 10 10 SF
+318 142 M
+( % \(episode_number, reward\) + \() s
+/Courier-Bold 10 10 SUF
+504 142 M
+('') s
+/F-gs-font 10 10 SF
+516 142 M
+( ) s
+/Courier-Bold 10 10 SUF
+522 142 M
+(if) s
+/F-gs-font 10 10 SF
+534 142 M
+( reward == -1 ) s
+/Courier-Bold 10 10 SUF
+618 142 M
+(else) s
+/F-gs-font 10 10 SF
+642 142 M
+( ) s
+/Courier-Bold 10 10 SUF
+648 142 M
+(' !!!!!!!!') s
+/F-gs-font 10 10 SF
+714 142 M
+() s
+_R
+S
+%%Trailer
+%%Pages: 3
+%%DocumentNeededResources: font Times-Roman Courier-Oblique Courier-Bold 
+%%+ font Courier Times-Bold 
+%%EOF
