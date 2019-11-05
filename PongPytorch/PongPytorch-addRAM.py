@@ -19,7 +19,7 @@ from torch import nn
 
 # Globals:
 paramFileName = 'params-addRAM.ckpt'
-doLoadState = False
+doLoadState = True
 doRender = False
 #usePixels = True
 #useRam = True
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     policy = Policy()
 
     if (doLoadState == True):
-        policy.load_state()
+        policy.load_state(paramFileName)
     else:
         torch.save(policy.state_dict(), paramFileName)
         
@@ -160,6 +160,7 @@ if __name__ == "__main__":
             opt.step()
 
         if it % 5 == 0:
+            print("Saving policy.state_dict() as "+paramFileName)
             torch.save(policy.state_dict(), paramFileName)
 
     env.close()
