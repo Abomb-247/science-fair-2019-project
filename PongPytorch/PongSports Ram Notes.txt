@@ -1,0 +1,7 @@
+
+Ball Location possibilities: 
+95 = y=position of adversary paddle
+
+b1 = ball x-position
+b6 = ball y-position measured from the top of the screen downward
+
