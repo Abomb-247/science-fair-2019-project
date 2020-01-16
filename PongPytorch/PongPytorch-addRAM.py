@@ -13,7 +13,7 @@ import random
 import gym
 import numpy as np
 from PIL import Image
-import torch
+import torch as torch
 from torch.nn import functional as F
 from torch import nn
 
