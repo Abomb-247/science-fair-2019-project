@@ -20,7 +20,7 @@ from torch import nn
 # Globals:
 paramFileName = 'params-3deep.ckpt'
 doLoadState = True
-doRender = False
+doRender = True
 #usePixels = True
 #useRam = True
 
